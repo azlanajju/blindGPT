@@ -3,8 +3,7 @@
 
 ## Introduction
 
-Welcome to the Visually Aided Chat GPT for Digital Learning project! This project is designed to assist visually impaired individuals in their digital learning journey by providing a chat interface powered by GPT-3.5 for natural language understanding and generation. This README provides an overview of the project, how to use it, and how to contribute.
-
+Welcome to the Visually Aided Chat GPT for Digital Learning project! This project is designed to assist visually impaired individuals in their digital learning journey by providing a chat interface powered by GPT-3.5 for natural language understanding and generation. This README provides an overview of the project, how to use it, 
 
 ## Features
 
