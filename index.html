@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div id="chat-container">
+
+        <form id="chat-form">
+            <input class="inputField" type="text" id="inputField" placeholder="Type your message...">
+            <button class="send-button" type="submit" id="send-button"><i class="fa fa-send-o"></i></button>
+        </form>
+
+        <div class="output" id="output"></div>
+
+
+    </div>
+    
+    <div class="chatUi">
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages go here -->
+        </div>
+        <br><br>
+        <div id="return"></div>
+
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-box');
+        const form = document.getElementById('chat-form');
+        const userInput = document.getElementById('inputField');
+        const outputDiv = document.getElementById('output');
+        var synth;
+    
+        function loader(element) {
+            element.innerHTML = '<div class="loader"></div>';
+        }
+    
+        function typeText(element, text) {
+            const textNode = document.createTextNode('');
+            element.appendChild(textNode);
+    
+            let index = 0;
+    
+            function addCharacter() {
+                if (index < text.length) {
+                    textNode.textContent += text.charAt(index);
+                    index++;
+                    setTimeout(addCharacter, 100); 
+                }
+            }
+    
+            addCharacter();
+        }
+    
+        function generateUniqueId() {
+            return 'message-' + Date.now();
+        }
+    
+        function chatStripe(isAi, message, uniqueId) {
+    const stripeClass = isAi ? 'bot-stripe' : 'user-stripe';
+    return `<div class="${stripeClass}" id="${uniqueId}">${message}</div>`;
+}
+
+    
+// ai 
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            let loadInterval;
+            window.location.href = "#return"
+            const userMessage = userInput.value.trim();
+    
+            if (userMessage === '') return;
+    
+            chatContainer.innerHTML += chatStripe(false, userMessage);
+    
+            userInput.value = '';
+    
+            const uniqueId = generateUniqueId();
+            chatContainer.innerHTML += chatStripe(true, '', uniqueId);
+    
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+            const messageDiv = document.getElementById(uniqueId);
+    
+            if (!messageDiv) {
+                console.error(`Message div with ID '${uniqueId}' not found.`);
+                return;
+            }
+    
+            loader(messageDiv);
+    
+            try {
+                const response = await fetch('http://127.0.0.1:8000/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: userMessage,
+                    }),
+                });
+    
+                clearInterval(loadInterval);
+                messageDiv.innerHTML = '';
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    const parsedData = data.bot.trim();
+    
+                    typeText(messageDiv, parsedData);
+                    var utterance = new SpeechSynthesisUtterance(parsedData);
+                    utterance.lang = 'en-US';
+                    synth.speak(utterance);
+                } else {
+                    const err = await response.text();
+    
+                    messageDiv.innerHTML = 'Something went wrong';
+                    alert(err);
+                    console.log(err);
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
+                messageDiv.innerHTML = 'Something went wrong';
+            }
+        };
+    
+        form.addEventListener('submit', handleSubmit);
+    
+userInput.addEventListener("input", function() {
+    var lastCharacter = userInput.value.slice(-1);
+    if (lastCharacter) {
+        var utterance = new SpeechSynthesisUtterance(lastCharacter);
+        utterance.lang = 'en-US';
+        synth.speak(utterance);
+    }
+    outputDiv.textContent = "You typed: " + userInput.value;
+});
+
+    
+        if ('speechSynthesis' in window) {
+            synth = window.speechSynthesis;
+        } else {
+            console.log("Speech synthesis is not supported in this browser.");
+        }
+
+
+
+
+        document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            userInput.focus();
+            if (recognition.active) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                setTimeout(() => {
+                    recognition.stop();
+                }, 5000);
+            }
+        }
+    });
+
+
+
+
+
+// speech to txt 
+
+    const startButton = document.getElementById('startButton');
+        const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+        
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        
+ 
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error: ', event.error);
+            startButton.textContent = 'Start Recording';
+        };
+        
+        recognition.onend = () => {
+            startButton.textContent = 'Start Recording';
+        };
+        
+        recognition.onresult = (event) => {
+            const result = event.results[event.results.length - 1][0].transcript;
+            userInput.value = result;
+        };
+        
+  
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,86 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+::-webkit-scrollbar{
+    width: 0;
+}
+body{
+    background: rgb(168, 168, 168);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.inputField{
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    width: 80vw;
+    padding: 10px;
+    font-size: 18px;
+    border-radius:30px ;
+    outline: none;
+    border: none;
+}
+.send-button{
+position: fixed;
+bottom: 23px;
+font-size: 30px;
+background: none;
+border: none;
+right: 10vw;
+}
+.output{
+    font-size: 30px;
+    padding:10px  15px;
+    z-index: 999;
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background: rgb(34, 34, 34);
+    color: white;
+
+
+}
+.chatUi{
+    width: 90vw;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 75px;
+    height: 85vh;
+    overflow-y: scroll;
+
+}
+.chat-box{
+    background:  #c9c9c9 ;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.bot-stripe {
+    background-color:  #999999 ;
+    color: #333;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 12px 12px 12px 0;
+    text-align: left;
+    display: inline-block;
+}
+
+.user-stripe {
+    background-color:  #7adbf3 ;
+    color: #333;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 12px 12px 0px 12px;
+    text-align: right;
+    
+}
