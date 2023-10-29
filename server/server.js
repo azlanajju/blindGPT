@@ -6,7 +6,8 @@ import { Configuration, OpenAIApi } from 'openai'
 dotenv.config()
 
 const configuration = new Configuration({
-  apiKey: 'API_KEY_HERE',
+  apiKey: 'API_KEY_HERE',    //api key cannot be shared in the github or public so removed
+
 });
 
 
